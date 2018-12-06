@@ -4,7 +4,7 @@ $os_image = (ENV['OS_IMAGE'] || "ubuntu16").to_sym
 
 def set_vbox(vb, config)
   vb.gui = false
-  vb.memory = 1280
+  vb.memory = 1408
   vb.cpus = 1
 
   case $os_image
