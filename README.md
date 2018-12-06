@@ -213,7 +213,102 @@ The remote system should have Kubernetes masters/workers setup.
     - { role: addons, tags: addons }
 
 ```
+```
+root@k8s-m1:~# kubectl get ns
+NAME          STATUS   AGE
+default       Active   10m
+development   Active   7m31s
+kube-public   Active   10m
+kube-system   Active   10m
+production    Active   7m31s
+staging       Active   7m31s
+root@k8s-m1:~# kubectl get all --all-namespaces
+NAMESPACE     NAME                                                                 READY   STATUS    RESTARTS   AGE
+development   pod/tiller-deploy-8d8676d44-bvwcm                                    1/1     Running   0          6m33s
+kube-system   pod/bunking-squirrel-grafana-7bbbd7cdd9-85dbw                        1/1     Running   0          4m29s
+kube-system   pod/coredns-86c58d9df4-srv77                                         1/1     Running   0          8m12s
+kube-system   pod/coredns-86c58d9df4-xffhr                                         1/1     Running   0          8m12s
+kube-system   pod/crazy-emu-nginx-ingress-controller-7f8dc9b448-6k2tr              1/1     Running   0          4m50s
+kube-system   pod/crazy-emu-nginx-ingress-default-backend-699bbcd79f-bfg9m         1/1     Running   0          4m50s
+kube-system   pod/etcd-k8s-m1                                                      1/1     Running   0          9m37s
+kube-system   pod/kube-apiserver-k8s-m1                                            1/1     Running   0          9m53s
+kube-system   pod/kube-controller-manager-k8s-m1                                   1/1     Running   0          9m43s
+kube-system   pod/kube-proxy-29d2b                                                 1/1     Running   0          8m25s
+kube-system   pod/kube-proxy-56zbw                                                 1/1     Running   0          10m
+kube-system   pod/kube-scheduler-k8s-m1                                            1/1     Running   0          9m48s
+kube-system   pod/kubernetes-dashboard-79ff88449c-4b5s7                            1/1     Running   0          10m
+kube-system   pod/prometheus-alertmanager-5bbd595756-k6bzd                         2/2     Running   0          4m39s
+kube-system   pod/prometheus-kube-state-metrics-b4d7c746-b9rtj                     1/1     Running   0          4m39s
+kube-system   pod/prometheus-node-exporter-k27dq                                   1/1     Running   0          4m40s
+kube-system   pod/prometheus-pushgateway-695c7c958b-6twbt                          1/1     Running   0          4m39s
+kube-system   pod/prometheus-server-7f59447d54-2jrsp                               1/2     Running   0          4m39s
+kube-system   pod/weave-net-j8q4t                                                  2/2     Running   0          10m
+kube-system   pod/weave-net-z7dvl                                                  2/2     Running   0          8m25s
+kube-system   pod/yellow-arachnid-nginx-ingress-controller-77cd6f49d5-tcl2r        1/1     Running   0          4m46s
+kube-system   pod/yellow-arachnid-nginx-ingress-default-backend-7c9fbf88d9-4wkws   1/1     Running   0          4m46s
+production    pod/tiller-deploy-77d75bcbf6-nhs4x                                   1/1     Running   0          6m31s
+staging       pod/tiller-deploy-57b8499c56-s4jr9                                   1/1     Running   0          6m32s
 
+NAMESPACE     NAME                                                       TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+default       service/kubernetes                                         ClusterIP      10.96.0.1        <none>        443/TCP                      10m
+development   service/tiller-deploy                                      ClusterIP      10.106.197.114   <none>        44134/TCP                    6m34s
+kube-system   service/bunking-squirrel-grafana                           ClusterIP      10.109.52.53     <none>        80/TCP                       4m29s
+kube-system   service/crazy-emu-nginx-ingress-controller                 LoadBalancer   10.96.145.192    <pending>     80:30196/TCP,443:32531/TCP   4m51s
+kube-system   service/crazy-emu-nginx-ingress-controller-metrics         ClusterIP      10.100.105.224   <none>        9913/TCP                     4m51s
+kube-system   service/crazy-emu-nginx-ingress-controller-stats           ClusterIP      10.110.197.56    <none>        18080/TCP                    4m51s
+kube-system   service/crazy-emu-nginx-ingress-default-backend            ClusterIP      10.97.94.156     <none>        80/TCP                       4m50s
+kube-system   service/kube-dns                                           ClusterIP      10.96.0.10       <none>        53/UDP,53/TCP                10m
+kube-system   service/kubernetes-dashboard                               ClusterIP      10.108.81.188    <none>        443/TCP                      10m
+kube-system   service/prometheus-alertmanager                            ClusterIP      10.102.212.64    <none>        80/TCP                       4m41s
+kube-system   service/prometheus-kube-state-metrics                      ClusterIP      None             <none>        80/TCP                       4m41s
+kube-system   service/prometheus-node-exporter                           ClusterIP      None             <none>        9100/TCP                     4m41s
+kube-system   service/prometheus-pushgateway                             ClusterIP      10.105.163.68    <none>        9091/TCP                     4m40s
+kube-system   service/prometheus-server                                  ClusterIP      10.109.198.42    <none>        80/TCP                       4m40s
+kube-system   service/yellow-arachnid-nginx-ingress-controller           NodePort       10.102.104.245   <none>        80:30080/TCP,443:30443/TCP   4m46s
+kube-system   service/yellow-arachnid-nginx-ingress-controller-metrics   ClusterIP      10.103.251.124   <none>        9913/TCP                     4m46s
+kube-system   service/yellow-arachnid-nginx-ingress-controller-stats     ClusterIP      10.107.195.220   <none>        18080/TCP                    4m46s
+kube-system   service/yellow-arachnid-nginx-ingress-default-backend      ClusterIP      10.109.169.84    <none>        80/TCP                       4m46s
+production    service/tiller-deploy                                      ClusterIP      10.108.62.121    <none>        44134/TCP                    6m31s
+staging       service/tiller-deploy                                      ClusterIP      10.107.144.60    <none>        44134/TCP                    6m32s
+
+NAMESPACE     NAME                                      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+kube-system   daemonset.apps/kube-proxy                 2         2         2       2            2           <none>          10m
+kube-system   daemonset.apps/prometheus-node-exporter   1         1         1       1            1           <none>          4m40s
+kube-system   daemonset.apps/weave-net                  2         2         2       2            2           <none>          10m
+
+NAMESPACE     NAME                                                            READY   UP-TO-DATE   AVAILABLE   AGE
+development   deployment.apps/tiller-deploy                                   1/1     1            1           6m34s
+kube-system   deployment.apps/bunking-squirrel-grafana                        1/1     1            1           4m29s
+kube-system   deployment.apps/coredns                                         2/2     2            2           10m
+kube-system   deployment.apps/crazy-emu-nginx-ingress-controller              1/1     1            1           4m50s
+kube-system   deployment.apps/crazy-emu-nginx-ingress-default-backend         1/1     1            1           4m50s
+kube-system   deployment.apps/kubernetes-dashboard                            1/1     1            1           10m
+kube-system   deployment.apps/prometheus-alertmanager                         1/1     1            1           4m40s
+kube-system   deployment.apps/prometheus-kube-state-metrics                   1/1     1            1           4m40s
+kube-system   deployment.apps/prometheus-pushgateway                          1/1     1            1           4m40s
+kube-system   deployment.apps/prometheus-server                               0/1     1            0           4m40s
+kube-system   deployment.apps/yellow-arachnid-nginx-ingress-controller        1/1     1            1           4m46s
+kube-system   deployment.apps/yellow-arachnid-nginx-ingress-default-backend   1/1     1            1           4m46s
+production    deployment.apps/tiller-deploy                                   1/1     1            1           6m31s
+staging       deployment.apps/tiller-deploy                                   1/1     1            1           6m32s
+
+NAMESPACE     NAME                                                                       DESIRED   CURRENT   READY   AGE
+development   replicaset.apps/tiller-deploy-8d8676d44                                    1         1         1       6m34s
+kube-system   replicaset.apps/bunking-squirrel-grafana-7bbbd7cdd9                        1         1         1       4m29s
+kube-system   replicaset.apps/coredns-86c58d9df4                                         2         2         2       10m
+kube-system   replicaset.apps/crazy-emu-nginx-ingress-controller-7f8dc9b448              1         1         1       4m50s
+kube-system   replicaset.apps/crazy-emu-nginx-ingress-default-backend-699bbcd79f         1         1         1       4m50s
+kube-system   replicaset.apps/kubernetes-dashboard-79ff88449c                            1         1         1       10m
+kube-system   replicaset.apps/prometheus-alertmanager-5bbd595756                         1         1         1       4m40s
+kube-system   replicaset.apps/prometheus-kube-state-metrics-b4d7c746                     1         1         1       4m40s
+kube-system   replicaset.apps/prometheus-pushgateway-695c7c958b                          1         1         1       4m40s
+kube-system   replicaset.apps/prometheus-server-7f59447d54                               1         1         0       4m40s
+kube-system   replicaset.apps/yellow-arachnid-nginx-ingress-controller-77cd6f49d5        1         1         1       4m46s
+kube-system   replicaset.apps/yellow-arachnid-nginx-ingress-default-backend-7c9fbf88d9   1         1         1       4m46s
+production    replicaset.apps/tiller-deploy-77d75bcbf6                                   1         1         1       6m31s
+staging       replicaset.apps/tiller-deploy-57b8499c56                                   1         1         1       6m32s
+
+```
 
 ### K8s addons manual install via Helm 
 ```
