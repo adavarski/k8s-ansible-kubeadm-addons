@@ -317,6 +317,13 @@ crazy-emu       	1       	Thu Dec  6 17:51:39 2018	DEPLOYED	nginx-ingress-1.0.1	
 prometheus      	1       	Thu Dec  6 17:51:50 2018	DEPLOYED	prometheus-8.1.0   	2.5.0      	kube-system
 yellow-arachnid 	1       	Thu Dec  6 17:51:44 2018	DEPLOYED	nginx-ingress-1.0.1	0.21.0     	kube-system
 
+kubectl get pods --namespace kube-system -l "app=grafana" -o jsonpath="{.items[0].metadata.name}"
+bunking-squirrel-grafana-7bbbd7cdd9-85dbw
+
+kubectl --namespace kube-system port-forward bunking-squirrel-grafana-7bbbd7cdd9-85dbw 3000
+
+BROWSER: http://localhost:3000 --- admin:admin --- import json file if needed.
+
 ```
 
 ### K8s addons manual install via Helm 
