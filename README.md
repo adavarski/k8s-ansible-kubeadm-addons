@@ -151,7 +151,22 @@ NAME                                    READY     STATUS    RESTARTS   AGE
 etcd-master1                            1/1       Running   0          23m
 ...
 ```
-### Helm 
+
+### K8s addons install via ansible role
+
+Example:
+----------------
+
+```yaml
+- hosts: master
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: addons, tags: addons }
+
+```
+
+### K8s addons manual install via Helm 
 ```
 $ cd helm-prometheus-grafana
 
