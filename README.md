@@ -308,6 +308,15 @@ kube-system   replicaset.apps/yellow-arachnid-nginx-ingress-default-backend-7c9f
 production    replicaset.apps/tiller-deploy-77d75bcbf6                                   1         1         1       6m31s
 staging       replicaset.apps/tiller-deploy-57b8499c56                                   1         1         1       6m32s
 
+
+root@k8s-m1:~# export PROD=/etc/kubernetes/pki/helm/prod/
+root@k8s-m1:~# helm list --tls --tls-ca-cert ${PROD}/tiller-prod-ca.pem --tls-cert ${PROD}/helm-prod-cert.pem --tls-key ${PROD}/helm-prod-key.pem --tiller-namespace=production --namespace=kube-system
+NAME            	REVISION	UPDATED                 	STATUS  	CHART              	APP VERSION	NAMESPACE  
+bunking-squirrel	1       	Thu Dec  6 17:52:00 2018	DEPLOYED	grafana-1.20.0     	5.4.0      	kube-system
+crazy-emu       	1       	Thu Dec  6 17:51:39 2018	DEPLOYED	nginx-ingress-1.0.1	0.21.0     	kube-system
+prometheus      	1       	Thu Dec  6 17:51:50 2018	DEPLOYED	prometheus-8.1.0   	2.5.0      	kube-system
+yellow-arachnid 	1       	Thu Dec  6 17:51:44 2018	DEPLOYED	nginx-ingress-1.0.1	0.21.0     	kube-system
+
 ```
 
 ### K8s addons manual install via Helm 
