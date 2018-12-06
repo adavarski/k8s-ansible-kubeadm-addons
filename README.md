@@ -163,13 +163,13 @@ This role installs the addons to Kubernetes cluster. Addons installed:
 * Prometheus
 * Grafana (includes a dashboard, using Prometheus as DataSource)
 
-Requirements
-------------
+#### Requirements
+
 
 The remote system should have Kubernetes masters/workers setup.
 
-Role Variables
---------------
+#### Role Variables
+
 
 **ansible_templates_dir**: Directory where templates for the role exist.
 
@@ -192,16 +192,16 @@ Role Variables
     short_ns: prod
 ```
 
-Dependencies
-------------
+#### Dependencies
+
 
 * roles/docker
 * roles/kubrnetes/master
 * roles/kubernetes/node
 * roles/cni
 
-Example Playbook
-----------------
+#### Example Playbook
+
 
 ```yaml
 - hosts: master
@@ -212,7 +212,6 @@ Example Playbook
 
 ```
 
-```
 
 ### K8s addons manual install via Helm 
 ```
