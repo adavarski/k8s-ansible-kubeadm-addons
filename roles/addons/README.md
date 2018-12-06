@@ -41,22 +41,21 @@ Role Variables
 Dependencies
 ------------
 
-* roles/bootstrap
-* roles/kube-master
-* roles/kube-worker
+* roles/docker
+* roles/kubrnetes/master
+* roles/kubernetes/node
 * roles/cni
 
 Example Playbook
 ----------------
 
 ```yaml
-- name: Setup Kubernetes addons
-  hosts: test-host
-  gather_facts: true
-  become: true
+- hosts: master
+  gather_facts: yes
+  become: yes
   roles:
-    - role: addons
-      tags: addons
+    - { role: addons, tags: addons }
+
 ```
 
 License
