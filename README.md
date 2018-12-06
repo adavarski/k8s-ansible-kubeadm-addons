@@ -154,6 +154,7 @@ etcd-master1                            1/1       Running   0          23m
 
 ### K8s addons install via ansible role
 
+
 Example:
 ----------------
 
