@@ -350,20 +350,24 @@ davar@home ~/LABS/k8s-ansible-kubeadm-addons-helm/roles/addons/templates/helm-va
       kubernetes.io/ingress.class: nginx-external
 davar@home ~/LABS/k8s-ansible-kubeadm-addons-helm/roles/addons/templates/helm-values $ grep external grafana.yml.j2 
     kubernetes.io/ingress.class: nginx-external
+    
+$ vagrant destroy -f; vagrant up    
 
 Install metallb:
 
-kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
+$ kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
 
-or use provided file : kubectl create -f metallb.yaml
+or use provided file : 
+
+$ kubectl create -f metallb.yaml
 
 You should see one controller pod, and one speaker pod for each node in your cluster.
 
 Configure MetalLB
 
-kubectl create -f example-layer2-config.yaml
+$ kubectl create -f example-layer2-config.yaml
 
-We have a sample MetalLB configuration in example-layer2-config.yaml. Let’s take a look at it before applying it:
+We have a sample MetalLB configuration in example-layer2-config.yaml. Let’s take a look at it:
 
 apiVersion: v1
 kind: ConfigMap
@@ -384,7 +388,7 @@ where
 $ vagrant ssh k8s-m1 -c "ip a s"|grep 192
     inet 192.16.35.11/24 brd 192.16.35.255 scope global eth1
 
-$ ip a s |grep "192.16.35"
+VagrantHost $ ip a s |grep "192.16.35"
     inet 192.16.35.1/24 brd 192.16.35.255 scope global vboxnet
     
 $ sudo netstat -rn|grep "192.16.35"
@@ -402,7 +406,7 @@ HostMax:   192.16.35.254        11000000.00010000.00100011.1111 1110
 Broadcast: 192.16.35.255        11000000.00010000.00100011.1111 1111
 Hosts/Net: 14      
 
-$ sudo route add -net 192.160.35.0/24 gw 192.16.35.1 if we using 192.168.35.240/28 in example-layer2-config.yaml
+$ sudo route add -net 192.168.35.0/24 gw 192.16.35.1 if we using 192.168.35.240/28 in example-layer2-config.yaml
 
 $ kubectl get svc --all-namespaces|grep Load
 kube-system   opinionated-eel-nginx-ingress-controller           LoadBalancer   10.101.216.228   192.16.35.240   80:32220/TCP,443:30614/TCP   24m
@@ -412,7 +416,7 @@ $ echo "192.16.35.240 grafana.local"|sudo tee -a "/etc/hosts"
 $ curl 192.16.35.240
 default backend - 404
 
-davar@home ~/LABS/k8s-ansible-kubeadm-addons-helm $ curl grafana.local
+ $ curl grafana.local
 <a href="/login">Found</a>.
 
 Browser: http://grafana.local --- admin:admin and we have monitoring cluster dashboard
@@ -420,6 +424,17 @@ Browser: http://grafana.local --- admin:admin and we have monitoring cluster das
 ```
 
 ### K8s addons manual install via Helm 
+```
+This is not present in site.yaml
+
+```yaml
+- hosts: master
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: addons, tags: addons }
+
+```
 ```
 $ cd helm-prometheus-grafana
 
