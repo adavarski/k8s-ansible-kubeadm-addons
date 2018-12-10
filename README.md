@@ -326,6 +326,99 @@ BROWSER: http://localhost:3000 --- admin:admin --- import json file if needed.
 
 ```
 
+### K8s addons via ansible with MetalLB
+
+https://metallb.universe.tf/tutorial/layer2/
+
+```
+$ kubectl get svc --all-namespaces|grep Load
+kube-system   opinionated-eel-nginx-ingress-controller           LoadBalancer   10.101.216.228    <pending>   80:32220/TCP,443:30614/TCP   24m
+```
+Kubernetes does not offer an implementation of network load-balancers (Services of type LoadBalancer) for bare metal clusters. The implementations of Network LB that Kubernetes does ship with are all glue code that calls out to various IaaS platforms (GCP, AWS, Azure…). If you’re not running on a supported IaaS platform (GCP, AWS, Azure…), LoadBalancers will remain in the “pending” state indefinitely when created.
+
+Bare metal cluster operators are left with two lesser tools to bring user traffic into their clusters, “NodePort” and “externalIPs” services. Both of these options have significant downsides for production use, which makes bare metal clusters second class citizens in the Kubernetes ecosystem.
+
+MetalLB aims to redress this imbalance by offering a Network LB implementation that integrates with standard network equipment, so that external services on bare metal clusters also “just work” as much as possible.
+
+To implement MetalLB in this Vagrant env:
+```
+change from nginx-internal to nginx-external
+
+davar@home ~/LABS/k8s-ansible-kubeadm-addons-helm/roles/addons/templates/helm-values $ grep external prometheus.yml.j2 
+      kubernetes.io/ingress.class: nginx-external
+      kubernetes.io/ingress.class: nginx-external
+      kubernetes.io/ingress.class: nginx-external
+davar@home ~/LABS/k8s-ansible-kubeadm-addons-helm/roles/addons/templates/helm-values $ grep external grafana.yml.j2 
+    kubernetes.io/ingress.class: nginx-external
+
+Install metallb:
+
+kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
+
+or use provided file : kubectl create -f metallb.yaml
+
+You should see one controller pod, and one speaker pod for each node in your cluster.
+
+Configure MetalLB
+
+kubectl create -f example-layer2-config.yaml
+
+We have a sample MetalLB configuration in example-layer2-config.yaml. Let’s take a look at it before applying it:
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: my-ip-space
+      protocol: layer2
+      addresses:
+      - 192.16.35.240/28
+
+
+where 
+
+$ vagrant ssh k8s-m1 -c "ip a s"|grep 192
+    inet 192.16.35.11/24 brd 192.16.35.255 scope global eth1
+
+$ ip a s |grep "192.16.35"
+    inet 192.16.35.1/24 brd 192.16.35.255 scope global vboxnet
+    
+$ sudo netstat -rn|grep "192.16.35"
+192.16.35.0     0.0.0.0         255.255.255.0   U         0 0          0 vboxnet6
+192.168.35.0    192.16.35.1     255.255.255.0   UG        0 0          0 vboxnet6
+
+$ ipcalc 192.16.35.240/28
+Address:   192.16.35.240        11000000.00010000.00100011.1111 0000
+Netmask:   255.255.255.240 = 28 11111111.11111111.11111111.1111 0000
+Wildcard:  0.0.0.15             00000000.00000000.00000000.0000 1111
+=>
+Network:   192.16.35.240/28     11000000.00010000.00100011.1111 0000
+HostMin:   192.16.35.241        11000000.00010000.00100011.1111 0001
+HostMax:   192.16.35.254        11000000.00010000.00100011.1111 1110
+Broadcast: 192.16.35.255        11000000.00010000.00100011.1111 1111
+Hosts/Net: 14      
+
+$ sudo route add -net 192.160.35.0/24 gw 192.16.35.1 if we using 192.168.35.240/28 in example-layer2-config.yaml
+
+$ kubectl get svc --all-namespaces|grep Load
+kube-system   opinionated-eel-nginx-ingress-controller           LoadBalancer   10.101.216.228   192.16.35.240   80:32220/TCP,443:30614/TCP   24m
+
+$ echo "192.16.35.240 grafana.local"|sudo tee -a "/etc/hosts"
+
+$ curl 192.16.35.240
+default backend - 404
+
+davar@home ~/LABS/k8s-ansible-kubeadm-addons-helm $ curl grafana.local
+<a href="/login">Found</a>.
+
+Browser: http://grafana.local --- admin:admin and we have monitoring cluster dashboard
+
+```
+
 ### K8s addons manual install via Helm 
 ```
 $ cd helm-prometheus-grafana
